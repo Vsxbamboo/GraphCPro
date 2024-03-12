@@ -21,24 +21,36 @@ Status Tourism::creatGraph() {
     //读取文件部分
     std::string line;
     //读取Vex
-    int num;
+    int vex_max_num=0,num=-1;
     std::string name,desc;
-    while(getline(vexfile,line)){
-        std::stringstream stream(line);
-        stream>>num;
-        stream>>name;
-        stream>>desc;
-        g.insertVex(Vex(num,name,desc));
+    vexfile>>vex_max_num;
+    g.init(vex_max_num);
+    for(int i=0;i<vex_max_num;i++){
+        vexfile>>num;
+        vexfile>>name;
+        vexfile>>desc;
+        if(0<=num && num<vex_max_num && !name.empty() && !desc.empty()){
+            g.insertVex(Vex(num,name,desc));
+        }else{
+            std::cout<<"创建失败,文件格式错误"<<std::endl;
+            return FILE_FORMAT_ERROR;
+        }
     }
     g.showVex();
     //读取Edge
-    int vexnum1,vexnum2,weight;
+    int vexnum1=-1,vexnum2=-1,weight=-1;
     while(getline(edgefile,line)){
         std::stringstream stream(line);
         stream>>vexnum1;
         stream>>vexnum2;
         stream>>weight;
-        g.insertEdge(Edge(vexnum1,vexnum2,weight));
+        if(0<=vexnum1 && 0<=vexnum2 && 0<=weight
+        && vexnum1<vex_max_num && vexnum2<vex_max_num){
+            g.insertEdge(Edge(vexnum1,vexnum2,weight));
+        }else{
+            std::cout<<"创建失败,文件格式错误"<<std::endl;
+            return FILE_FORMAT_ERROR;
+        }
     }
     g.showEdge();
 
@@ -51,6 +63,10 @@ Status Tourism::creatGraph() {
 }
 
 Status Tourism::getSpotInfo() {
+    if(!g.isInit()){
+        std::cout<<"景区景点图尚未创建,请先使用选项1创建景区景点图"<<std::endl;
+        return SPOT_NOT_CREAT;
+    }
     int returncode;
     //列出所有景点序号
     int vexnum=g.getVexnum();

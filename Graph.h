@@ -61,14 +61,17 @@ private:
     int** adjMatrix;
     Vex* vexs;
     int vexnum;
+    bool ifinit;
 public:
-    const int VEX_MAX_NUM=100;
+    int VEX_MAX_NUM;
     const int VEX_NUM_FULL=-1;
     const int EDGE_OVERRIDE=-2;
     const int EDGE_OUTOFBOUND=-3;
     const int INDEX_OUTOFBOUND=-4;
     const int EDGE_NOT_EXIST=-5;
+    const int NOT_INIT=-6;
     Graph();
+    void init(int VEX_MAX_NUM);
     Status insertVex(const Vex& vex);
     Status insertEdge(const Edge& edge);
     Status getVex(int index,Vex& vex)const;
@@ -76,5 +79,6 @@ public:
     Status getEdge(int vexnum1,int vexnum2,Edge& edge)const;
     void showVex()const;
     void showEdge()const;
+    bool isInit()const;
 };
 #endif //GRAPHCPRO_GRAPH_H

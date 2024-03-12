@@ -4,7 +4,9 @@
 
 #include "Graph.h"
 
-Graph::Graph() {
+void Graph::init(int VEX_MAX_NUM){
+
+    this->VEX_MAX_NUM=VEX_MAX_NUM;
     vexs=new Vex[VEX_MAX_NUM];
     adjMatrix=new int*[VEX_MAX_NUM];
     for(int i=0;i<VEX_MAX_NUM;i++){
@@ -16,9 +18,13 @@ Graph::Graph() {
         }
     }
     vexnum=0;
+    ifinit=true;
 }
 
 Status Graph::insertVex(const Vex& vex) {
+    if(!ifinit){
+        return NOT_INIT;
+    }
     if(vexnum==VEX_MAX_NUM){
         return VEX_NUM_FULL;
     }
@@ -28,6 +34,9 @@ Status Graph::insertVex(const Vex& vex) {
 }
 
 Status Graph::insertEdge(const Edge& edge) {
+    if(!ifinit){
+        return NOT_INIT;
+    }
     if(edge.vexnum1<0 || edge.vexnum1>=VEX_MAX_NUM
     || edge.vexnum2<0 || edge.vexnum2>=VEX_MAX_NUM
     || edge.weight<0){
@@ -60,6 +69,9 @@ void Graph::showEdge() const{
 }
 
 Status Graph::getVex(const int index, Vex &vex) const{
+    if(!ifinit){
+        return NOT_INIT;
+    }
     if(index<0 || index>=vexnum){
         return INDEX_OUTOFBOUND;
     }
@@ -72,8 +84,19 @@ int Graph::getVexnum() const{
 }
 
 Status Graph::getEdge(const int vexnum1, const int vexnum2,Edge& edge) const {
+    if(!ifinit){
+        return NOT_INIT;
+    }
     if(adjMatrix[vexnum1][vexnum2]==-1)
         return EDGE_NOT_EXIST;
     edge=Edge(vexnum1,vexnum2,adjMatrix[vexnum1][vexnum2]);
     return 0;
+}
+
+Graph::Graph() {
+    ifinit=false;
+}
+
+bool Graph::isInit() const {
+    return ifinit;
 }
