@@ -106,12 +106,12 @@ Graph::~Graph() {
     delete[] adjMatrix;
 }
 
-Status Graph::DFStraverse(int startpoint, Path &path) {
-    path=Path(vexnum);
-    bool *visited=new bool[vexnum];
-    path.push(startpoint);
+Status Graph::DFStraverse(int startpoint,Path *& pathList) {
+    pathList=new Path(vexnum);
+    bool *visited=new bool[vexnum]{0};
+    pathList->push(startpoint);
     visited[startpoint]=true;
-    Path *pList=&path;
+    Path *pList=pathList;
     DFS(pList,visited);
     return 0;
 }
@@ -119,23 +119,19 @@ Status Graph::DFStraverse(int startpoint, Path &path) {
 void Graph::DFS(Path *&pList,bool *visited) {
     //先循环找下一个，如果找不到就回退，如果找得到，就push，判断是否满了，如果满了就记录且回退，如果不满就递归DFS
     for(int i=0;i<vexnum;i++){
-
         if(adjMatrix[pList->getLast()][i]!=-1 && !visited[i]){
+
             pList->push(i);
 
             visited[i]=true;
             if(pList->getLength()==vexnum){
-                //调试输出
                 std::cout<<"find:"<<pList->toString()<<std::endl;
-
                 pList->next=new Path(vexnum);
                 *(pList->next)=*pList;
                 pList=pList->next;
                 visited[i]=false;
                 pList->pop();
                 pList->next=nullptr;
-
-
             }else{
                 DFS(pList,visited);
             }

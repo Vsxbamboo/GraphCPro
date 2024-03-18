@@ -61,7 +61,7 @@ struct Path{
     int p;
     int size;
     Path *next;
-    Path(int size):size(size),pathnum(new int[size]),p(0),next(nullptr){
+    Path(int size):size(size),pathnum(new int[size]{0}),p(0),next(nullptr){
 
     }
     ~Path(){
@@ -72,12 +72,10 @@ struct Path{
             pathnum[p]=index;
             p++;
         }
-//        std::cout<<"pListChange:"<<toString()<<std::endl;
     }
     void pop(){
         if(p>0){
             p--;
-//            std::cout<<"pListChange:"<<toString()<<std::endl;
         }else{
             std::cout<<"非法pop"<<std::endl;
         }
@@ -102,6 +100,7 @@ struct Path{
         if(this==&rp)
             return *this;
         size=rp.size;
+        delete[] pathnum;
         pathnum=new int[size];
         p=rp.p;
         next=rp.next;
@@ -140,6 +139,6 @@ public:
     void showVex()const;
     void showEdge()const;
     bool isInit()const;
-    Status DFStraverse(int startpoint,Path& path);
+    Status DFStraverse(int startpoint,Path *& pList);
 };
 #endif //GRAPHCPRO_GRAPH_H

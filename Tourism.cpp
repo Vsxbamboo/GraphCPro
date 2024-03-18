@@ -118,18 +118,25 @@ Status Tourism::travelPath() {
         std::cout<<"±àºÅ´íÎó"<<std::endl;
         return 0;
     }
-    Path path(vexnum);
-    g.DFStraverse(vexindex,path);
-    Path *pList=&path;
+    Path *pList;
+    g.DFStraverse(vexindex,pList);
+
     std::cout<<"Result:"<<std::endl;
     int count=0;
-
+    std::cout<<"vexnum"<<vexnum<<std::endl;
+    auto pList2=pList;
     while(pList!=nullptr){
         count++;
         std::cout<<pList->toString()<<" r"<<std::endl;
         pList=pList->next;
     }
     std::cout<<"count:"<<count<<std::endl;
+
+    while(pList2!=nullptr){
+        auto p=pList2;
+        pList2=pList2->next;
+        delete p;
+    }
     return 0;
 }
 
