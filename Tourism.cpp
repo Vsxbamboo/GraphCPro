@@ -36,7 +36,7 @@ Status Tourism::creatGraph() {
             return FILE_FORMAT_ERROR;
         }
     }
-    g.showVex();
+//    g.showVex();
     //读取Edge
     int vexnum1=-1,vexnum2=-1,weight=-1;
     while(getline(edgefile,line)){
@@ -52,7 +52,7 @@ Status Tourism::creatGraph() {
             return FILE_FORMAT_ERROR;
         }
     }
-    g.showEdge();
+//    g.showEdge();
 
     //关闭文件
     vexfile.close();
@@ -99,6 +99,37 @@ Status Tourism::getSpotInfo() {
             std::cout<<vex.name<<"->"<<nearvex.name<<" "<<edge.weight<<std::endl;
         }
     }
+    return 0;
+}
+
+Status Tourism::travelPath() {
+    //列出所有景点序号
+    int vexnum=g.getVexnum();
+    Vex vex;
+    std::cout<<"=====旅游景点导航====="<<std::endl;
+    for(int i=0;i<vexnum;i++){
+        g.getVex(i,vex);
+        std::cout<<vex.num<<"-"<<vex.name<<std::endl;
+    }
+    std::cout<<"请输入起始点编号:";
+    int vexindex;
+    std::cin>>vexindex;
+    if(vexindex<0 || vexindex>=vexnum){
+        std::cout<<"编号错误"<<std::endl;
+        return 0;
+    }
+    Path path(vexnum);
+    g.DFStraverse(vexindex,path);
+    Path *pList=&path;
+    std::cout<<"Result:"<<std::endl;
+    int count=0;
+
+    while(pList!=nullptr){
+        count++;
+        std::cout<<pList->toString()<<" r"<<std::endl;
+        pList=pList->next;
+    }
+    std::cout<<"count:"<<count<<std::endl;
     return 0;
 }
 

@@ -30,6 +30,7 @@ int main() {
                 tourism.getSpotInfo();
                 break;
             case 3:
+                tourism.travelPath();
                 break;
             case 4:
                 break;

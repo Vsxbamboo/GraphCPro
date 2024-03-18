@@ -56,12 +56,71 @@ struct Edge{
     }
 };
 
+struct Path{
+    int *pathnum;
+    int p;
+    int size;
+    Path *next;
+    Path(int size):size(size),pathnum(new int[size]),p(0),next(nullptr){
+
+    }
+    ~Path(){
+        delete[] pathnum;
+    }
+    void push(int index){
+        if(0<=index && index<size){
+            pathnum[p]=index;
+            p++;
+        }
+//        std::cout<<"pListChange:"<<toString()<<std::endl;
+    }
+    void pop(){
+        if(p>0){
+            p--;
+//            std::cout<<"pListChange:"<<toString()<<std::endl;
+        }else{
+            std::cout<<"非法pop"<<std::endl;
+        }
+    }
+
+    int getLast() const{
+        return pathnum[p-1];
+    }
+
+    int getLength() const{
+        return p;
+    }
+    std::string toString() const{
+        std::string str;
+        for(int i=0;i<p;i++){
+            str+=std::to_string(pathnum[i]);
+            str+=" ";
+        }
+        return str;
+    }
+    Path& operator=(const Path& rp){
+        if(this==&rp)
+            return *this;
+        size=rp.size;
+        pathnum=new int[size];
+        p=rp.p;
+        next=rp.next;
+        for(int i=0;i<size;i++){
+            pathnum[i]=rp.pathnum[i];
+        }
+        return *this;
+    }
+
+};
+
 class Graph {
 private:
     int** adjMatrix;
     Vex* vexs;
     int vexnum;
     bool ifinit;
+    void DFS(Path *&pList,bool *visited);
+
 public:
     int VEX_MAX_NUM;
     const int VEX_NUM_FULL=-1;
@@ -71,6 +130,7 @@ public:
     const int EDGE_NOT_EXIST=-5;
     const int NOT_INIT=-6;
     Graph();
+    ~Graph();
     void init(int VEX_MAX_NUM);
     Status insertVex(const Vex& vex);
     Status insertEdge(const Edge& edge);
@@ -80,5 +140,6 @@ public:
     void showVex()const;
     void showEdge()const;
     bool isInit()const;
+    Status DFStraverse(int startpoint,Path& path);
 };
 #endif //GRAPHCPRO_GRAPH_H

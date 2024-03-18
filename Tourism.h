@@ -23,8 +23,8 @@
 
 class Tourism {
 private:
-    const std::string vexfilepath="C:\\E\\cpp\\GraphCPro\\Vex.txt.txt";
-    const std::string edgefilepath="C:\\E\\cpp\\GraphCPro\\Edge.txt.txt";
+    const std::string vexfilepath="C:\\E\\cpp\\GraphCPro\\Vex.txt";
+    const std::string edgefilepath="C:\\E\\cpp\\GraphCPro\\Edge.txt";
     Graph g;
 public:
     const int FILE_NOT_EXIST=-1;
@@ -33,6 +33,7 @@ public:
     Tourism();
     Status creatGraph();
     Status getSpotInfo();
+    Status travelPath();
 };
 
 
