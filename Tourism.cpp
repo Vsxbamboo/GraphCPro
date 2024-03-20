@@ -103,6 +103,10 @@ Status Tourism::getSpotInfo() {
 }
 
 Status Tourism::travelPath() {
+    if(!g.isInit()){
+        std::cout<<"景区景点图尚未创建,请先使用选项1创建景区景点图"<<std::endl;
+        return SPOT_NOT_CREAT;
+    }
     //列出所有景点序号
     int vexnum=g.getVexnum();
     Vex vex;
@@ -121,22 +125,99 @@ Status Tourism::travelPath() {
     Path *pList;
     g.DFStraverse(vexindex,pList);
 
-    std::cout<<"Result:"<<std::endl;
-    int count=0;
-    std::cout<<"vexnum"<<vexnum<<std::endl;
     auto pList2=pList;
     while(pList!=nullptr){
-        count++;
-        std::cout<<pList->toString()<<" r"<<std::endl;
+        for(int i=0;i<pList->p;i++){
+            g.getVex(pList->pathnum[i],vex);
+            std::cout<<vex.name;
+            if(i!=pList->p-1)
+                std::cout<<"->";
+        }
+        std::cout<<std::endl;
         pList=pList->next;
     }
-    std::cout<<"count:"<<count<<std::endl;
-
+    //释放
     while(pList2!=nullptr){
         auto p=pList2;
         pList2=pList2->next;
         delete p;
     }
+    return 0;
+}
+
+Status Tourism::findShortPath() {
+    if(!g.isInit()){
+        std::cout<<"景区景点图尚未创建,请先使用选项1创建景区景点图"<<std::endl;
+        return SPOT_NOT_CREAT;
+    }
+    std::cout<<"=====搜索最短路径====="<<std::endl;
+    //列出景点编号
+    int vexnum=g.getVexnum();
+    Vex vex;
+    for(int i=0;i<vexnum;i++){
+        g.getVex(i,vex);
+        std::cout<<vex.num<<"-"<<vex.name<<std::endl;
+    }
+    int startpoint,endpoint;
+    std::cout<<"请输入起点的编号:";
+    std::cin>>startpoint;
+    if(startpoint<0 || startpoint>=vexnum){
+        std::cout<<"编号错误"<<std::endl;
+        return 0;
+    }
+    std::cout<<"请输入终点的编号:";
+    std::cin>>endpoint;
+    if(endpoint<0 || endpoint>=vexnum){
+        std::cout<<"编号错误"<<std::endl;
+        return 0;
+    }
+    Path *pathp;
+    int returncode=
+    g.findShortPath(startpoint,endpoint,pathp);
+    if(returncode==g.NO_SHORT_PATH){
+        std::cout<<"没有找到最短路径"<<std::endl;
+        return 0;
+    }
+    std::cout<<"最短路径为:";
+    for(int i=0;i<pathp->p;i++){
+        g.getVex(pathp->pathnum[i],vex);
+        std::cout<<vex.name;
+        if(i!=pathp->p-1){
+            std::cout<<"->";
+        }
+    }
+    std::cout<<std::endl;
+
+    int pathlength=0;
+    Edge edge;
+    for(int i=0;i<pathp->p-1;i++){
+        g.getEdge(pathp->pathnum[i],pathp->pathnum[i+1],edge);
+        pathlength+=edge.weight;
+    }
+    std::cout<<"最短距离为:"<<pathlength<<std::endl;
+    delete pathp;
+    return 0;
+}
+
+Status Tourism::designPath() {
+    if(!g.isInit()){
+        std::cout<<"景区景点图尚未创建,请先使用选项1创建景区景点图"<<std::endl;
+        return SPOT_NOT_CREAT;
+    }
+    std::cout<<"=====铺设电路规划====="<<std::endl;
+    Edge *edges = nullptr;
+    g.findMinTree(edges);
+    int vexnum=g.getVexnum();
+    Vex vex;
+    int totalweight=0;
+    for(int i=0;i<vexnum-1;i++){
+        g.getVex(edges[i].vexnum1,vex);
+        std::cout<<vex.name<<"-";
+        g.getVex(edges[i].vexnum2,vex);
+        std::cout<<vex.name<<" "<<edges[i].weight<<std::endl;
+        totalweight+=edges[i].weight;
+    }
+    std::cout<<"铺设电路的总长度为:"<<totalweight<<std::endl;
     return 0;
 }
 

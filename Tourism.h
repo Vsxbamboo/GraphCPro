@@ -34,6 +34,8 @@ public:
     Status creatGraph();
     Status getSpotInfo();
     Status travelPath();
+    Status findShortPath();
+    Status designPath();
 };
 
 

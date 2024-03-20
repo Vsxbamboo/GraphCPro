@@ -33,13 +33,14 @@ int main() {
                 tourism.travelPath();
                 break;
             case 4:
+                tourism.findShortPath();
                 break;
             case 5:
+                tourism.designPath();
                 break;
             case 0:
                 std::cout<<"感谢您的使用,再见!";
                 return 0;
-                break;
             default:
                 std::cout<<"无效选项"<<std::endl;
 

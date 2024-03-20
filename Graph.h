@@ -80,7 +80,18 @@ struct Path{
             std::cout<<"非法pop"<<std::endl;
         }
     }
+    void dequeue(int& e){
+        if(p==0){
+            std::cout<<"非法dequeue"<<std::endl;
+        }else{
+            e=pathnum[0];
+            for(int i=p-1;i>0;i--){
+                pathnum[i-1]=pathnum[i];
+            }
+            p--;
+        }
 
+    }
     int getLast() const{
         return pathnum[p-1];
     }
@@ -128,6 +139,7 @@ public:
     const int INDEX_OUTOFBOUND=-4;
     const int EDGE_NOT_EXIST=-5;
     const int NOT_INIT=-6;
+    const int NO_SHORT_PATH=-7;
     Graph();
     ~Graph();
     void init(int VEX_MAX_NUM);
@@ -140,5 +152,7 @@ public:
     void showEdge()const;
     bool isInit()const;
     Status DFStraverse(int startpoint,Path *& pList);
+    Status findShortPath(int startpoint,int endpoint,Path *& pathp);
+    Status findMinTree(Edge* &edges);
 };
 #endif //GRAPHCPRO_GRAPH_H

@@ -113,6 +113,7 @@ Status Graph::DFStraverse(int startpoint,Path *& pathList) {
     visited[startpoint]=true;
     Path *pList=pathList;
     DFS(pList,visited);
+    delete[] visited;
     return 0;
 }
 
@@ -125,7 +126,6 @@ void Graph::DFS(Path *&pList,bool *visited) {
 
             visited[i]=true;
             if(pList->getLength()==vexnum){
-                std::cout<<"find:"<<pList->toString()<<std::endl;
                 pList->next=new Path(vexnum);
                 *(pList->next)=*pList;
                 pList=pList->next;
@@ -139,4 +139,130 @@ void Graph::DFS(Path *&pList,bool *visited) {
     }
     visited[pList->getLast()]=false;
     pList->pop();
+}
+
+Status Graph::findShortPath(int startpoint, int endpoint, Path *&pathp) {
+    pathp=new Path(vexnum);
+
+    //访问数组
+    bool *visited=new bool[vexnum]{0};
+    visited[startpoint]=true;
+    //距离数组
+    int *distance=new int[vexnum];
+    //中间路径数组
+    int *closet=new int[vexnum];
+    //初始化
+    for(int i=0;i<vexnum;i++){
+        distance[i]=adjMatrix[startpoint][i];
+        closet[i]=-1;
+    }
+
+    int min=-1,minvex=-1;
+    //Dijkstra
+    //每次找一个点,找n-1次
+    for(int i=0;i<vexnum-1;i++){
+
+        min=-1;
+        //先找出当前最短的,贪心?
+        for(int j=0;j<vexnum;j++){
+            if( (min>distance[j] || min==-1 )&& distance[j]!=-1 && !visited[j]){
+                min=distance[j];
+                minvex=j;
+            }
+        }
+        //找到就记录且更新
+        if(min!=-1){
+            //记录
+            visited[minvex]=true;
+            //更新未选中的
+            for(int j=0;j<vexnum;j++){
+                if(!visited[j] && adjMatrix[minvex][j]!=-1
+                && (distance[j]>min+adjMatrix[minvex][j] || distance[j]==-1) ){
+                    distance[j]=min+adjMatrix[minvex][j];
+                    closet[j]=minvex;
+                }
+            }
+        }
+    }
+    //如果没有路径
+    if(distance[endpoint]==-1){
+        return NO_SHORT_PATH;
+    }
+
+    auto temp=new Path(vexnum);
+    temp->push(endpoint);
+    while(closet[temp->getLast()]!=-1){
+        temp->push(closet[temp->getLast()]);
+    }
+    temp->push(startpoint);
+    int i=temp->p-1,j=0;
+    while(i>=0){
+        pathp->push(temp->pathnum[i]);
+        i--;
+        j++;
+    }
+
+    delete[] visited;
+    delete[] distance;
+    return 0;
+}
+
+Status Graph::findMinTree(Edge* &edges) {
+    edges=new Edge[vexnum-1];
+    int edge_counter=0;
+
+    int closet[vexnum];//记录最短边
+    int lowcost[vexnum];//判断是否已经纳入该顶点
+    for(int i=0;i<vexnum;i++){
+        closet[i]=0;
+        lowcost[i]=adjMatrix[0][i];
+    }
+    //从0号顶点开始查找
+    lowcost[0]=0;
+    int min=-1,minvex=-1;
+    for(int i=0;i<vexnum-1;i++){
+        min=-1;
+        for(int j=0;j<vexnum;j++){
+            if(lowcost[j]!=0 && lowcost[j]!=-1 && (min>lowcost[j] || min==-1)){
+                min=lowcost[j];
+                minvex=j;
+            }
+        }
+        if(min!=-1){
+            lowcost[minvex]=0;
+            for(int j=0;j<vexnum;j++){
+                if(adjMatrix[minvex][j]!=-1 && adjMatrix[minvex][j]!=-1 && (lowcost[j]>adjMatrix[minvex][j] || lowcost[j]==-1)){
+                    lowcost[j]=adjMatrix[minvex][j];
+                    closet[j]=minvex;
+                }
+            }
+        }
+    }
+    for(int i=0;i<vexnum;i++){
+        if(i==0){
+            continue;
+        }
+        edges[edge_counter]=Edge(closet[i],i,adjMatrix[closet[i]][i]);
+        edge_counter++;
+    }
+    //额外排序一下
+    int tempnum;
+    for(int i=0;i<edge_counter;i++){
+        if(edges[i].vexnum1>edges[i].vexnum2){
+            tempnum=edges[i].vexnum1;
+            edges[i].vexnum1=edges[i].vexnum2;
+            edges[i].vexnum2=tempnum;
+        }
+    }
+    Edge tempedge;
+    for(int i=0;i<edge_counter-1;i++){
+        for(int j=i+1;j<edge_counter;j++){
+            if(edges[i].vexnum1>edges[j].vexnum1){
+                tempedge=edges[i];
+                edges[i]=edges[j];
+                edges[j]=tempedge;
+            }
+        }
+    }
+    return 0;
 }
